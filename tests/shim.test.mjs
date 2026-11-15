@@ -54,7 +54,14 @@ test('maps abort to cancelled', async () => {
 
 test('cancel in passcode prompt throws cancelled', async () => {
   const askPasscode = async () => null;
-  await assert.rejects(call('/api/sample', {}, { needPasscode: true }, { fetch: async () => reply(200, {}), askPasscode, storage: mem() }), e => e.code === 'cancelled');
+  await assert.rejects(call('/api/sample', {}, { needPasscode: true }, { fetch: async () => reply(401, { error: { code: 'unauthorised' } }), askPasscode, storage: mem() }), e => e.code === 'cancelled');
+});
+
+test('open access: no prompt when helper accepts without passcode', async () => {
+  let asked = 0;
+  const r = await call('/api/sample', {}, { needPasscode: true }, { fetch: async () => reply(200, { result: 1 }), askPasscode: async () => { asked++; return 'x'; }, storage: mem() });
+  assert.equal(r.result, 1);
+  assert.equal(asked, 0);
 });
 
 test('onSnapshot re-fires after own write in that collection', async () => {

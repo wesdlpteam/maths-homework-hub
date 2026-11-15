@@ -43,7 +43,8 @@ export function gate(req, res, env = process.env, { needPasscode = true } = {}) 
   const type = String(req.headers?.["content-type"] || "").toLowerCase();
   if (!type.includes("application/json")) return fail(res, 400, "bad_request", "Send JSON.");
   if (isPaused(env)) return fail(res, 503, "paused", "The Hub's AI and saving are paused right now. Sheets still work.");
-  if (needPasscode && !samePasscode(req.headers?.["x-hub-passcode"], env.STAFF_PASSCODE)) {
+  // Passcode is opt-in: only enforced when STAFF_PASSCODE is set on Vercel (Nathan chose open access 2026-11-16).
+  if (needPasscode && env.STAFF_PASSCODE && !samePasscode(req.headers?.["x-hub-passcode"], env.STAFF_PASSCODE)) {
     return fail(res, 401, "unauthorised", "Staff passcode missing or wrong.");
   }
   return true;

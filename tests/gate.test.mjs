@@ -63,8 +63,6 @@ test("passcode required when asked", () => {
   assert.equal(gate(req({ headers: { "x-hub-passcode": "nope" } }), res(), ENV, { needPasscode: false }), true);
 });
 
-test("no STAFF_PASSCODE set refuses passcode routes", () => {
-  const r = res();
-  assert.equal(gate(req({ headers: { "x-hub-passcode": "" } }), r, {}, { needPasscode: true }), false);
-  assert.equal(r.code, 401);
+test("no STAFF_PASSCODE set means open access", () => {
+  assert.equal(gate(req(), res(), {}, { needPasscode: true }), true);
 });

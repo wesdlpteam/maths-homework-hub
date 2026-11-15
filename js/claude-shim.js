@@ -106,7 +106,8 @@
       return c;
     };
 
-    let res = await attempt(opts.needPasscode ? await getCode() : null);
+    // Ask only when the helper says a passcode is needed (open access when none is set).
+    let res = await attempt(opts.needPasscode ? store.getItem(KEY) : null);
     if (!res.ok && res.status === 401 && opts.needPasscode) {
       store.removeItem(KEY);
       res = await attempt(await getCode());
