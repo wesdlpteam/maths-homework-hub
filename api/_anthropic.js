@@ -48,7 +48,8 @@ export async function callAnthropic(body, env, fetchImpl = globalThis.fetch) {
     r = await fetchImpl("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
-        "x-api-key": env.ANTHROPIC_API_KEY || "",
+        // Trim: pasted keys often carry stray spaces/quotes/newlines.
+        "x-api-key": String(env.ANTHROPIC_API_KEY || "").trim().replace(/^["']|["']$/g, ""),
         "anthropic-version": "2023-06-01",
         "content-type": "application/json",
       },
