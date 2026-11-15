@@ -282,7 +282,7 @@ main { max-width: 1200px; margin: 0 auto; padding-block: 20px 48px; padding-inli
 .ro-templates h3 { margin: 0; font-size: 15px; }
 
 /* ---------- Staff passcode dialog ---------- */
-.pass-dialog { border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; background: var(--surface); color: var(--ink); padding: 0; width: min(92vw, 380px); box-shadow: var(--shadow); }
+.pass-dialog { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); padding: 0; width: min(92vw, 380px); box-shadow: var(--shadow); }
 .pass-dialog::backdrop { background: rgb(27 21 35 / 0.55); }
 .pass-form { display: grid; gap: 10px; padding: 20px; }
 .pass-title { margin: 0; font-family: var(--display); font-size: 20px; color: var(--purple); }
