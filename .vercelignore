@@ -1,0 +1,11 @@
+# helper only. never ship secrets or the static site from vercel
+.env*
+docs
+tests
+print
+data
+vendor
+assets
+css
+js
+index.html

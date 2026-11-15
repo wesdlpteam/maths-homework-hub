@@ -1,0 +1,13 @@
+{
+  "name": "maths-homework-hub",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Maths Homework Hub: helper functions for AI marking and saving",
+  "scripts": {
+    "test": "node --test \"tests/*.test.mjs\""
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.0"
+  }
+}

@@ -9,3 +9,6 @@ config.local.*
 .DS_Store
 Thumbs.db
 desktop.ini
+
+node_modules/
+.vercel/
