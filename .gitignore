@@ -1,0 +1,11 @@
+# secrets never commit
+.env
+.env.*
+*.key
+secrets.*
+config.local.*
+
+# os junk
+.DS_Store
+Thumbs.db
+desktop.ini

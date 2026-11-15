@@ -1,0 +1,252 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Maths Homework Hub (Copy)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@600;700&family=Source+Code+Pro:wght@600&display=swap">
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="css/sheet.css">
+<link rel="stylesheet" href="css/hub.css">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <img class="brand-crest" src="assets/wesley-logo-white.png" alt="Wesley College">
+    <div>
+      <h1 class="brand-title">Maths Homework Hub</h1>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Hub sections">
+      <button class="tab" role="tab" id="tab-sheets" aria-controls="panel-sheets" aria-selected="true">Homework sheets</button>
+      <button class="tab" role="tab" id="tab-guide" aria-controls="panel-guide" aria-selected="false">Student guide</button>
+      <button class="tab" role="tab" id="tab-marking" aria-controls="panel-marking" aria-selected="false">Mark with Claude</button>
+      <button class="tab" role="tab" id="tab-rollover" aria-controls="panel-rollover" aria-selected="false">Year rollover</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ============ Sheets ============ -->
+  <section class="panel" id="panel-sheets" role="tabpanel" aria-labelledby="tab-sheets">
+    <p class="panel-intro">Fortnightly homework from your course planner, aligned to AC9 and the Cambridge textbook. Each sheet has <b>5 questions</b> on two A4 sides: fluency first, building to worded problems, plus one <b>Recall</b> question from earlier learning. Download the PDF and print double-sided.</p>
+    <div class="filters">
+      <div class="field"><label for="year">Year</label><select id="year"></select></div>
+      <div class="field"><label for="course">Course</label><select id="course"></select></div>
+      <div class="field"><span class="field-label" id="term-label">Term</span>
+        <div class="term-chips" role="group" aria-labelledby="term-label" id="term-chips"></div></div>
+    </div>
+    <div class="sheets-layout">
+      <aside>
+        <div class="sheet-list" id="sheet-list"></div>
+      </aside>
+      <div>
+        <div class="preview-head">
+          <div><h2 id="preview-title">Sheet</h2><p class="note" id="preview-meta"></p></div>
+          <div class="view-toggle" role="group" aria-label="Preview">
+            <button id="view-sheet" aria-pressed="true">Student sheet</button>
+            <button id="view-key" aria-pressed="false">Answer key</button>
+          </div>
+        </div>
+        <div class="sheet-actions">
+          <div class="btn-row">
+            <button class="btn primary" id="dl-sheet">Download sheet</button>
+            <button class="btn" id="dl-key">Download answer key</button>
+            <span class="toast" id="dl-toast" role="status"></span>
+          </div>
+          <div class="redo-bar" id="redo-bar">
+            <span class="redo-label">Redo with Claude:</span>
+            <span class="btn-row" id="redo-buttons"></span>
+            <button class="btn small" id="redo-all">Redo whole sheet</button>
+          </div>
+          <div class="redo-bar" id="cs-bar">
+            <span class="redo-label">Class sets:</span>
+            <span class="btn-row" id="cs-sets"></span>
+            <button class="btn small" id="cs-new">Make a class set</button>
+          </div>
+        </div>
+        <div class="draft-banner" id="cs-panel" hidden>
+          <div><b>Class set</b> · every student gets their own numbers and code. <span id="cs-status" role="status"></span></div>
+          <div class="btn-row" id="cs-form">
+            <div class="field"><label for="cs-label">Class (optional)</label><input type="text" id="cs-label" maxlength="12" placeholder="e.g. 8EB"></div>
+            <div class="field"><label for="cs-count">Students on this sheet</label><input type="number" id="cs-count" min="0" max="35" value="25"></div>
+            <div id="cs-groups" class="cs-groups"></div>
+            <button class="btn small" id="cs-add-group" type="button">+ Add a differentiated group</button>
+            <button class="btn gold" id="cs-make">Make sheets</button>
+            <button class="btn" id="cs-cancel">Cancel</button>
+          </div>
+          <div class="progress"><div id="cs-progress"></div></div>
+          <button class="btn small" id="cs-stop" hidden>Stop</button>
+          <ul class="draft-issues" id="cs-issues"></ul>
+          <div class="btn-row" id="cs-review" hidden>
+            <div class="field"><label for="cs-preview">Preview student</label><select id="cs-preview"></select></div>
+            <button class="btn gold" id="cs-save">Save class set</button>
+            <button class="btn" id="cs-discard">Discard</button>
+            <span class="toast" id="cs-toast" role="status"></span>
+          </div>
+        </div>
+        <div class="draft-banner" id="cs-open" hidden>
+          <div><b id="cs-open-title"></b></div>
+          <div class="btn-row">
+            <div class="field"><label for="cs-open-preview">Preview student</label><select id="cs-open-preview"></select></div>
+            <button class="btn primary" id="cs-dl-sheets">Download student sheets</button>
+            <button class="btn" id="cs-dl-key">Download answer keys</button>
+            <button class="btn small" id="cs-delete">Delete class set</button>
+            <span class="toast" id="cs-open-toast" role="status"></span>
+          </div>
+          <div class="banner error" id="cs-del-confirm" role="alertdialog" aria-labelledby="cs-del-text" hidden>
+            <span id="cs-del-text"></span>
+            <div class="btn-row"><button class="btn" id="cs-del-yes">Yes, delete it</button><button class="btn primary" id="cs-del-no">Keep it</button></div>
+          </div>
+          <p class="note">Hand out the sheets in code order and note who got which. When marking, choose this class set and Claude reads each student’s code from their scan.</p>
+        </div>
+        <div class="draft-banner" id="draft-banner" hidden>
+          <div><b>Draft, not saved.</b> <span id="draft-text"></span></div>
+          <ul class="draft-issues" id="draft-issues"></ul>
+          <div class="btn-row">
+            <button class="btn gold" id="draft-save">Save as new version</button>
+            <button class="btn" id="draft-discard">Discard draft</button>
+            <span class="toast" id="draft-toast" role="status"></span>
+          </div>
+        </div>
+        <div class="desk" id="desk"><div id="preview"></div></div>
+        <div id="measure" class="measure" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Student guide ============ -->
+  <section class="panel" id="panel-guide" role="tabpanel" aria-labelledby="tab-guide" hidden>
+    <p class="panel-intro">Share this with students when you set the homework. It explains how to scan both sides into one PDF and upload it to the WiSE assessment task. Every sheet also has a short reminder printed on the front.</p>
+    <div class="guide-layout">
+      <div class="guide-paper" id="guide-preview"></div>
+      <aside class="side-card">
+        <h3>Share it</h3>
+        <button class="btn primary" id="dl-guide">Download guide PDF</button>
+        <button class="btn" id="copy-guide">Copy text for WiSE</button>
+        <p class="toast" id="guide-toast" role="status"></p>
+        <label class="note" for="guide-text">Text that will be copied:</label>
+        <textarea id="guide-text" readonly></textarea>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ Marking ============ -->
+  <section class="panel" id="panel-marking" role="tabpanel" aria-labelledby="tab-marking" hidden>
+    <p class="panel-intro">Drop in your class’s scans and Claude corrects each question, checks the working and writes a short comment for each student. <b>No marks or grades.</b> You review and edit everything before exporting. Scans and results stay in this page only, and nothing is saved when you close it.</p>
+
+    <div class="banner error" id="mk-unavailable" hidden></div>
+
+    <div class="steps">
+      <section class="step" aria-labelledby="s1">
+        <div class="step-head"><span class="step-num">1</span><h2 id="s1">Load the scans</h2>
+          <span class="note">A zip of the class’s submissions, or any mix of PDF, JPG and PNG files. One file per student works best.</span></div>
+        <div class="btn-row" style="margin-bottom:12px">
+          <div class="field"><label for="mk-year">Year</label><select id="mk-year"></select></div>
+          <div class="field"><label for="mk-course">Course</label><select id="mk-course"></select></div>
+          <div class="field"><label for="mk-sheet">Which sheet is this?</label><select id="mk-sheet"></select></div>
+        </div>
+        <div class="dropzone" id="mk-drop">
+          <p><b>Drag files here</b> or</p>
+          <label class="btn primary" for="mk-files">Choose files</label>
+          <input type="file" id="mk-files" multiple accept=".zip,.pdf,.jpg,.jpeg,.png,.webp,application/zip,application/pdf,image/*" hidden>
+          <p class="note" id="mk-load-status" role="status">Students are matched by file or folder name. You can fix names below.</p>
+        </div>
+        <div class="roster" id="mk-roster"></div>
+      </section>
+
+      <section class="step" aria-labelledby="s2">
+        <div class="step-head"><span class="step-num">2</span><h2 id="s2">Mark with Claude</h2>
+          <span class="note">About 30–60 seconds per student, one at a time. Uses your own Claude allowance: one request per student. The first time, Claude asks you to allow this page.</span></div>
+        <div class="btn-row">
+          <button class="btn primary" id="mk-run" disabled>Mark class</button>
+          <button class="btn" id="mk-stop" hidden>Stop</button>
+          <button class="btn" id="mk-retry" hidden>Retry failed</button>
+          <span class="note" id="mk-run-status" role="status"></span>
+        </div>
+        <div class="progress" style="margin-top:10px"><div id="mk-progress"></div></div>
+      </section>
+
+      <section class="step" aria-labelledby="s3">
+        <div class="step-head"><span class="step-num">3</span><h2 id="s3">Review and edit</h2>
+          <span class="note">Questions Claude was unsure about are outlined in red. Tick “Checked” once you have looked.</span></div>
+        <div class="legend" id="mk-legend"></div>
+        <div id="mk-review" style="margin-top:12px"><p class="note">Results appear here as each student is marked.</p></div>
+      </section>
+
+      <section class="step" aria-labelledby="s4">
+        <div class="step-head"><span class="step-num">4</span><h2 id="s4">Class summary and export</h2></div>
+        <div id="mk-counts"></div>
+        <div class="btn-row" style="margin-top:12px">
+          <button class="btn" id="mk-summary" disabled>Write class summary</button>
+          <button class="btn gold" id="mk-export" disabled>Download results (CSV)</button>
+          <span class="note" id="mk-export-status" role="status"></span>
+        </div>
+        <div class="summary-out" id="mk-summary-out"></div>
+      </section>
+    </div>
+  </section>
+  <!-- ============ Year rollover ============ -->
+  <section class="panel" id="panel-rollover" role="tabpanel" aria-labelledby="tab-rollover" hidden>
+    <p class="panel-intro">Set up next year’s homework from the new course planners. Upload the filled-in planner templates, check the plan for each fortnight, then build. Matching sheets are reused; Claude writes the rest. Last year’s sheets stay available under <b>Year</b>.</p>
+    <div class="banner warn" id="ro-readonly" hidden>Only Hub editors can build the new year’s library. You can still preview a plan.</div>
+    <div class="steps">
+      <section class="step" aria-labelledby="ro1">
+        <div class="step-head"><span class="step-num">1</span><h2 id="ro1">Upload the course planners</h2>
+          <span class="note">Use the Word planner templates (one per course). The Hub reads the Week and Content columns.</span></div>
+        <div class="dropzone" id="ro-drop">
+          <p><b>Drag planners here</b> or</p>
+          <label class="btn primary" for="ro-files">Choose planners</label>
+          <input type="file" id="ro-files" multiple accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+          <p class="note" id="ro-load-status" role="status">No planners loaded yet.</p>
+        </div>
+        <div class="ro-templates">
+          <h3>Blank planner templates</h3>
+          <p class="note">Send these to course leaders to fill in. Dates, holidays and homework sheet codes are already filled in.</p>
+          <div class="btn-row" id="ro-templates"></div>
+          <span class="toast" id="ro-tpl-toast" role="status"></span>
+        </div>
+      </section>
+      <section class="step" aria-labelledby="ro2">
+        <div class="step-head"><span class="step-num">2</span><h2 id="ro2">Check the plan</h2>
+          <span class="note">For each fortnight: reuse an existing sheet, have Claude write a new one, or have no sheet (exam weeks).</span></div>
+        <div id="ro-plan"><p class="note">The plan appears here after you upload a planner.</p></div>
+      </section>
+      <section class="step" aria-labelledby="ro3">
+        <div class="step-head"><span class="step-num">3</span><h2 id="ro3">Build the library</h2>
+          <span class="note">Reused sheets are copied instantly. New sheets take about a minute each and use about two Claude requests from your allowance.</span></div>
+        <div class="btn-row">
+          <button class="btn primary" id="ro-build" disabled>Build library</button>
+          <button class="btn" id="ro-stop" hidden>Stop</button>
+          <span class="note" id="ro-status" role="status"></span>
+        </div>
+        <div class="progress" style="margin-top:10px"><div id="ro-progress"></div></div>
+      </section>
+      <section class="step" aria-labelledby="ro4">
+        <div class="step-head"><span class="step-num">4</span><h2 id="ro4">Master timetable</h2></div>
+        <p class="note">Coming soon. When the 2027 master timetable is ready, it will be added here. Nothing needs to be done yet.</p>
+      </section>
+    </div>
+  </section>
+</main>
+
+<script src="vendor/katex/katex.min.js"></script>
+<script src="vendor/katex/auto-render.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+<script src="js/core.js"></script>
+<script src="data/y7.js"></script>
+<script src="data/y8.js"></script>
+<script src="data/y9.js"></script>
+<script src="data/y10.js"></script>
+<script src="data/y10s.js"></script>
+<script src="data/y10e.js"></script>
+<script src="data/y10s-t4-ra.js"></script>
+<script src="data/y10s-t4-rb.js"></script>
+<script src="js/sheet-render.js"></script>
+<script src="js/guide.js"></script>
+<script src="js/marking.js"></script>
+<script src="js/redo.js"></script>
+<script src="js/planner-template.js"></script>
+<script src="js/rollover.js"></script>
+<script src="js/classset.js"></script>
+<script src="js/app.js"></script>
+
+</body></html>

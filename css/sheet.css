@@ -1,0 +1,234 @@
+/* Printable A4 homework sheet. Always paper-white, whatever the app theme.
+   Each side is 297 mm tall with 9 mm top/bottom padding, so each half is exactly
+   139.5 mm and the boundary between halves sits on the page midline (148.5 mm). */
+.sheet {
+  --ink: #16131c;
+  --muted: #5b5566;
+  --rule: #b9b3c4;
+  --grid: #e4e0ea;
+  --wes-purple: #50275a;
+  --wes-gold: #c9a227;
+  color: var(--ink);
+  font-family: "Source Sans 3", "Segoe UI", Arial, sans-serif;
+  font-size: 10pt;
+  line-height: 1.3;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.sheet *, .sheet *::before, .sheet *::after { box-sizing: border-box; }
+
+.sheet-side {
+  width: 210mm;
+  height: 297mm;
+  padding: 9mm 10mm;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+.sheet-side + .sheet-side { margin-top: 8mm; }
+
+.half {
+  height: 139.5mm;
+  display: flex;
+  flex-direction: column;
+  gap: 2mm;
+  overflow: hidden;
+  position: relative;
+}
+.half.top { padding-bottom: 2mm; }
+.half.bottom { padding-top: 2mm; }
+
+/* ---------- Header (side 1) ---------- */
+.sh-head {
+  display: grid;
+  grid-template-columns: 30mm 1fr auto;
+  gap: 3mm;
+  align-items: center;
+  border-bottom: 0.6mm solid var(--wes-purple);
+  padding-bottom: 2mm;
+}
+.sh-crest { width: 30mm; height: auto; display: block; }
+.sh-school { font-size: 8pt; letter-spacing: 0.08em; text-transform: uppercase; color: var(--wes-purple); font-weight: 700; }
+.sh-title { font-family: "Source Serif 4", Georgia, serif; font-size: 14pt; font-weight: 700; line-height: 1.15; margin: 0.5mm 0; }
+.sh-meta { font-size: 8.5pt; color: var(--muted); }
+.sh-code {
+  border: 0.5mm solid var(--ink);
+  border-radius: 1.5mm;
+  padding: 1.5mm 3mm;
+  text-align: center;
+  font-family: "Source Code Pro", Consolas, monospace;
+}
+.sh-code b { display: block; font-size: 13pt; letter-spacing: 0.04em; }
+.sh-code small { font-size: 6.5pt; color: var(--muted); font-family: "Source Sans 3", Arial, sans-serif; }
+
+.sh-fields { display: grid; grid-template-columns: 2.2fr 1fr 1fr; gap: 4mm; font-size: 9pt; }
+.sh-fields span { border-bottom: 0.3mm solid var(--ink); padding-bottom: 0.5mm; white-space: nowrap; }
+.sh-legend { font-size: 7.5pt; color: var(--muted); display: flex; gap: 4mm; flex-wrap: wrap; }
+.sh-legend .lvl { margin-right: 1mm; }
+
+/* Running header on side 2 */
+.sh-run {
+  display: flex; justify-content: space-between; align-items: baseline;
+  border-bottom: 0.4mm solid var(--wes-purple); padding-bottom: 1.5mm; font-size: 9pt;
+}
+.sh-run .sh-code { padding: 0.8mm 2.5mm; }
+.sh-run .sh-code b { font-size: 11pt; display: inline; }
+
+/* ---------- Question grid ---------- */
+.qgrid {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2mm;
+}
+.qrow {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3mm;
+  min-height: 0;
+}
+.sec-band {
+  flex: none;
+  display: flex; justify-content: space-between; align-items: baseline;
+  background: var(--wes-purple); color: #fff;
+  padding: 0.6mm 2.5mm; border-radius: 1mm;
+  font-weight: 700; font-size: 9pt; letter-spacing: 0.04em;
+}
+.sec-band .ac9 { font-weight: 400; font-size: 6.5pt; opacity: 0.9; letter-spacing: 0; }
+
+.q {
+  display: flex; flex-direction: column;
+  border: 0.3mm solid var(--rule); border-radius: 1.5mm;
+  padding: 1.5mm 2mm 2mm;
+  min-height: 0;
+}
+.q.span-2 { grid-column: 1 / -1; }
+.q-head { display: flex; align-items: center; gap: 2mm; margin-bottom: 0.8mm; }
+.qnum {
+  display: inline-grid; place-items: center;
+  min-width: 6mm; height: 6mm; padding: 0 1mm; border-radius: 1mm;
+  background: var(--ink); color: #fff; font-weight: 700; font-size: 9.5pt;
+}
+.lvl { color: var(--wes-gold); font-size: 8pt; letter-spacing: 0.5mm; }
+.q-prompt { margin: 0; }
+.q-parts { display: flex; flex-wrap: wrap; gap: 0.5mm 5mm; margin: 0.8mm 0 0; padding: 0; list-style: none; }
+.q-parts li b { font-weight: 700; margin-right: 1mm; }
+.q-body.side-svg { display: grid; grid-template-columns: 1fr auto; gap: 3mm; flex: 1; }
+
+.q-body { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+.diagram { display: block; flex: none; margin: 1mm auto 0; width: 100%; height: 26mm; }
+.diagram line, .diagram polygon, .diagram rect, .diagram path, .diagram polyline { stroke: var(--ink); stroke-width: 1.1; fill: none; }
+.diagram text { fill: var(--ink); stroke: none; font-family: "Source Sans 3", Arial, sans-serif; }
+.diagram .lbl { font-size: 10px; }
+.diagram .tick { font-size: 8px; text-anchor: middle; }
+.diagram .gridline { stroke: #c9c3d3; stroke-width: 0.5; }
+.diagram .axis { stroke: var(--ink); stroke-width: 1.2; }
+.diagram.grid-svg { width: 72mm; height: 72mm; margin: 0; }
+
+.work {
+  flex: 1;
+  margin-top: 1.2mm;
+  border-radius: 1mm;
+  background-color: #fff;
+  background-image:
+    linear-gradient(var(--grid) 0.25mm, transparent 0.25mm),
+    linear-gradient(90deg, var(--grid) 0.25mm, transparent 0.25mm);
+  background-size: 5mm 5mm;
+  position: relative;
+}
+.work::before {
+  content: "Show your working";
+  position: absolute; top: 0.6mm; right: 1.2mm;
+  font-size: 6.5pt; color: #9a93a6; background: #fff; padding: 0 1mm;
+}
+.space-S .work { min-height: 13mm; }
+.space-M .work { min-height: 19mm; }
+.space-L .work { min-height: 32mm; }
+
+.tw { border-collapse: collapse; margin: 1mm 0 0; font-size: 8.5pt; }
+.tw th, .tw td { border: 0.25mm solid var(--rule); padding: 0.3mm 1.6mm; text-align: center; }
+.tw th { font-weight: 600; background: #f3f0f7; }
+
+/* ---------- Reflection + hand-in (side 2, bottom) ---------- */
+.reflect {
+  border: 0.3mm solid var(--wes-gold); border-radius: 1.5mm; padding: 1.5mm 2.5mm;
+  height: 17mm; flex: none;
+}
+.reflect b { color: var(--wes-purple); }
+.handin {
+  flex: none;
+  display: flex; gap: 2.5mm; align-items: center;
+  background: #f3f0f7; border-left: 1.2mm solid var(--wes-gold); border-radius: 1mm;
+  padding: 1.2mm 2.5mm; font-size: 8pt; line-height: 1.25;
+}
+.handin svg { flex: none; width: 6mm; height: 6mm; }
+.handin svg * { fill: none; stroke: var(--wes-purple); stroke-width: 1.6; }
+
+/* ---------- Answer key (teacher view) ---------- */
+.key { font-family: "Source Sans 3", "Segoe UI", Arial, sans-serif; font-size: 10.5pt; line-height: 1.4; }
+.key h2 { font-family: "Source Serif 4", Georgia, serif; margin: 0 0 1mm; }
+.key-q { border-top: 1px solid var(--rule, #ccc); padding: 3mm 0; break-inside: avoid; }
+.key-q h3 { margin: 0 0 1mm; font-size: 11pt; }
+.key-q .ans { font-weight: 700; }
+.key-q ul { margin: 0.5mm 0 0 5mm; padding: 0; }
+.key-q .lbl { font-size: 8.5pt; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.7; margin-top: 1.5mm; }
+
+@media print {
+  @page { size: A4 portrait; margin: 0; }
+  .sheet-side { break-after: page; page-break-after: always; margin: 0 !important; }
+  .sheet-side:last-child { break-after: auto; page-break-after: auto; }
+  .key-q { break-inside: avoid; }
+}
+
+/* A diagram beside the working space in a full-width question. */
+.q-body.side-svg > .diagram:not(.grid-svg) { width: 84mm; height: 36mm; margin: 0; align-self: center; }
+.diagram.big-lbl .lbl { font-size: 15px; }
+
+/* ---------- Student Guide (always paper-white, one A4 page when printed) ---------- */
+.guide {
+  --ink: #16131c; --muted: #5b5566; --wes-purple: #50275a; --wes-gold: #c9a227; --line: #ddd6e8;
+  background: #fff; color: var(--ink);
+  font-family: "Source Sans 3", "Segoe UI", Arial, sans-serif; font-size: 11pt; line-height: 1.4;
+  max-width: 182mm; margin: 0 auto; padding: 10mm 12mm;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.guide-head { display: grid; grid-template-columns: 36mm 1fr; gap: 6mm; align-items: center; border-bottom: 0.6mm solid var(--wes-purple); padding-bottom: 4mm; }
+.guide-crest { width: 36mm; height: auto; }
+.guide-eyebrow { font-size: 8.5pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--wes-purple); }
+.guide-title { font-family: "Source Serif 4", Georgia, serif; font-size: 20pt; line-height: 1.15; margin: 1mm 0; text-wrap: balance; }
+.guide-lede { margin: 0; color: var(--muted); }
+.guide-steps { list-style: none; counter-reset: step; margin: 5mm 0 0; padding: 0; display: grid; gap: 3.2mm; }
+.guide-steps li { counter-increment: step; display: grid; grid-template-columns: 9mm 1fr; column-gap: 3mm; }
+.guide-steps li::before {
+  content: counter(step); grid-row: span 2;
+  width: 8mm; height: 8mm; border-radius: 50%; display: grid; place-items: center;
+  background: var(--wes-purple); color: #fff; font-weight: 700;
+}
+.guide-steps h3 { margin: 0; font-size: 11.5pt; }
+.guide-steps p { margin: 0.5mm 0 0; }
+.guide-fig { margin: 6mm 0 0; }
+.guide-art { width: 100%; max-width: 150mm; height: auto; display: block; margin: 0 auto; }
+.guide-art .g-phone { fill: #2a2433; }
+.guide-art .g-screen { fill: #8a8296; }
+.guide-art .g-paper { fill: #fff; }
+.guide-art .g-code { fill: none; stroke: #16131c; stroke-width: 1; }
+.guide-art .g-ink { stroke: #50275a; stroke-width: 1.4; }
+.guide-art .g-shadow { fill: #000; opacity: 0.35; }
+.guide-art text { font-family: "Source Sans 3", Arial, sans-serif; text-anchor: middle; }
+.guide-art .g-ok { fill: #1d7a3e; font-weight: 700; font-size: 11px; }
+.guide-art .g-bad { fill: #b3261e; font-weight: 700; font-size: 11px; }
+.guide-art .g-cap { fill: #5b5566; font-size: 9px; }
+.guide-foot { margin: 5mm 0 0; padding: 3mm 4mm; background: #f3f0f7; border-left: 1.2mm solid var(--wes-gold); font-size: 10pt; }
+
+/* Recall question: gold tag, so it reads as a different kind of question without its own band. */
+.tag-recall {
+  font-size: 7.5pt; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  background: var(--wes-gold); color: #16131c; padding: 0.4mm 2mm; border-radius: 1mm;
+}
+.recall-from { font-size: 7pt; color: var(--muted); }
+.q.is-recall { border-color: var(--wes-gold); }
