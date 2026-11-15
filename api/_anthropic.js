@@ -62,7 +62,12 @@ export async function callAnthropic(body, env, fetchImpl = globalThis.fetch) {
     clearTimeout(timer);
   }
   if (r.status === 429 || r.status === 529) throw new ApiError(429, "rate_limited", "The AI service is busy. Try again shortly.");
-  if (!r.ok) throw new ApiError(502, "upstream_error", `The AI service returned an error (${r.status}).`);
+  if (!r.ok) {
+    // Surface only Anthropic's error type (e.g. authentication_error), never its message text.
+    let type = "";
+    try { const e = await r.json(); type = /^[a-z_]{1,40}$/.test(e?.error?.type) ? ` ${e.error.type}` : ""; } catch { /* none */ }
+    throw new ApiError(502, "upstream_error", `The AI service returned an error (${r.status}${type}).`);
+  }
   let data;
   try { data = await r.json(); } catch { throw new ApiError(502, "bad_reply", "The AI reply was unreadable."); }
   const parts = Array.isArray(data?.content) ? data.content : [];
